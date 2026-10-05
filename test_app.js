@@ -4,7 +4,7 @@ const path = require('path');
 console.log('=== BADGECRAFT STUDIO PRO VALIDATION SUITE ===\n');
 
 const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-const js = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
+const js = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8');
 const css = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8');
 
 let passed = 0;

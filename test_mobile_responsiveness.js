@@ -10,9 +10,9 @@ const assert = require('assert');
 
 console.log('=== MOBILE RESPONSIVENESS & PERFORMANCE TEST SUITE ===\n');
 
-const appJs = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
-const stylesCss = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8');
-const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+const appJs = fs.readFileSync(path.join(__dirname, 'script.js'), 'utf8').replace(/\r\n/g, '\n');
+const stylesCss = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8').replace(/\r\n/g, '\n');
+const indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
 
 let passCount = 0;
 
