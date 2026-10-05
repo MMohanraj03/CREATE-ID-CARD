@@ -1,0 +1,19 @@
+{
+  "name": "corporate-id-card-studio",
+  "version": "1.0.0",
+  "description": "Professional 3D Corporate Employee ID Card Designer & Security Badge Suite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_app.js && node test_mobile_responsiveness.js"
+  },
+  "keywords": [
+    "id-card",
+    "badge-generator",
+    "cr80",
+    "corporate-identity",
+    "3d-cards"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,2228 @@
+/* ==========================================================================
+   BADGECRAFT PRO - ENTERPRISE CANVA-STYLE BADGE STUDIO STYLESHEET
+   ISO/IEC 7810 ID-1 (CR80) Standard with Direct On-Canvas Manipulation
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design Tokens & Global Root
+   -------------------------------------------------------------------------- */
+:root {
+  --bg-app: #0a0d14;
+  --bg-topbar: #111624;
+  --bg-sidebar: #0d121d;
+  --bg-drawer: #151b2a;
+  --bg-canvas: #0e1320;
+  --bg-card-default: #0f172a;
+  --bg-elevated: #1f273b;
+  --bg-input: #1a2235;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: #3b82f6;
+  --border-hover: rgba(255, 255, 255, 0.2);
+
+  --text-main: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Accent Colors */
+  --canva-blue: #3b82f6;
+  --canva-cyan: #06b6d4;
+  --canva-purple: #8b5cf6;
+  --canva-emerald: #10b981;
+  --canva-gold: #f59e0b;
+  --canva-rose: #f43f5e;
+
+  /* CR80 Card Dimensions */
+  --card-w-portrait: 340px;
+  --card-h-portrait: 540px;
+  --card-w-landscape: 540px;
+  --card-h-landscape: 340px;
+
+  /* Canvas Zoom */
+  --canvas-zoom: 1;
+
+  /* Typography */
+  --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  --font-serif: 'Cinzel', serif;
+  --font-signature: 'Alex Brush', cursive;
+
+  /* Shadows */
+  --shadow-artboard: 0 35px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --shadow-handle: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.canva-app-body {
+  font-family: var(--font-ui);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. Top Application Bar
+   -------------------------------------------------------------------------- */
+.canva-navbar {
+  height: 54px;
+  background-color: var(--bg-topbar);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.nav-left, .nav-center, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.4);
+}
+
+.app-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-studio {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  color: white;
+}
+
+.project-title-box {
+  display: flex;
+  flex-direction: column;
+  margin-left: 6px;
+}
+
+.project-title-input {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 2px 6px;
+  width: 220px;
+  transition: all 0.2s;
+}
+
+.project-title-input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-subtle);
+}
+
+.project-title-input:focus {
+  background: var(--bg-input);
+  border-color: var(--canva-blue);
+  outline: none;
+}
+
+.save-status-indicator {
+  font-size: 0.65rem;
+  color: var(--canva-emerald);
+  padding-left: 6px;
+}
+
+/* History Undo/Redo */
+.history-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-tool-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-tool-icon:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.btn-tool-icon:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-tool-icon.active {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--canva-blue);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Mode Pill */
+.mode-pill-toggle {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mode-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-pill-btn:hover {
+  color: var(--text-main);
+}
+
+.mode-pill-btn.active {
+  background: var(--canva-blue);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+/* Buttons */
+.btn-secondary-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary-nav:hover {
+  background: #2a354f;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dropdown-wrapper {
+  position: relative;
+}
+
+.btn-accent-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  border: none;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-accent-nav:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.5);
+}
+
+/* Export Menu */
+.export-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 260px;
+  background: var(--bg-drawer);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.export-menu.hidden {
+  display: none;
+}
+
+.export-menu-item {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.export-menu-item strong {
+  font-size: 0.8rem;
+  color: var(--text-main);
+}
+
+.export-menu-item span {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.export-menu-item.highlight-item {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.export-menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. Contextual Property Ribbon
+   -------------------------------------------------------------------------- */
+.context-toolbar {
+  height: 44px;
+  background: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 90;
+  flex-shrink: 0;
+}
+
+.context-left, .context-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.context-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.context-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background: var(--border-subtle);
+  margin: 0 4px;
+}
+
+.canva-select-font {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 0.78rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  max-width: 180px;
+}
+
+.canva-select-font optgroup {
+  background: #111827;
+  color: var(--canva-cyan);
+  font-weight: 700;
+}
+
+.canva-select-font option {
+  background: #1e293b;
+  color: #ffffff;
+  font-weight: normal;
+}
+
+.font-size-stepper {
+  display: flex;
+  align-items: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.step-btn {
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.step-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.font-size-input {
+  width: 36px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 0.78rem;
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.color-preview-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  display: block;
+  cursor: pointer;
+}
+
+.btn-group-inline {
+  display: flex;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.btn-tool-prop {
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.btn-tool-prop:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-tool-prop.active {
+  background: rgba(59, 130, 246, 0.25);
+  color: var(--canva-blue);
+}
+
+.btn-tool-prop.btn-danger:hover {
+  color: var(--canva-rose);
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.range-slider {
+  width: 75px;
+  accent-color: var(--canva-blue);
+  cursor: pointer;
+}
+
+.opacity-value-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  width: 32px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Main Workspace Layout
+   -------------------------------------------------------------------------- */
+.canva-workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   5. Left Sidebar Navigation
+   -------------------------------------------------------------------------- */
+.canva-sidebar {
+  width: 72px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  gap: 6px;
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.sidebar-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.sidebar-tab:hover {
+  color: var(--text-main);
+}
+
+.sidebar-tab.active {
+  color: var(--canva-cyan);
+}
+
+.sidebar-tab.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 3px;
+  background: var(--canva-cyan);
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 8px var(--canva-cyan);
+}
+
+/* --------------------------------------------------------------------------
+   6. Sidebar Flyout Drawer
+   -------------------------------------------------------------------------- */
+.sidebar-drawer {
+  width: 340px;
+  background-color: var(--bg-drawer);
+  border-right: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  flex-shrink: 0;
+  z-index: 45;
+}
+
+.drawer-panel {
+  display: none;
+  padding: 20px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drawer-panel.active {
+  display: flex;
+}
+
+.drawer-header {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 10px;
+}
+
+.drawer-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.drawer-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.drawer-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.drawer-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 6px 0;
+}
+
+/* Template Cards Grid */
+.template-search-wrap {
+  margin-bottom: 4px;
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.template-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.template-card:hover {
+  border-color: var(--canva-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.template-preview-thumb {
+  height: 80px;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-end;
+  padding: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.thumb-badge {
+  font-size: 0.48rem;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+/* Theme Thumbnails */
+.cyber-thumb { background: radial-gradient(circle at 10% 10%, #1e293b 0%, #0a0f1d 75%); border: 1px solid #06b6d4; }
+.gold-thumb { background: radial-gradient(circle at 50% 0%, #2a2824 0%, #121110 85%); border: 1px solid #f59e0b; }
+.corporate-thumb { background: linear-gradient(160deg, #1e3a8a 0%, #0f172a 65%); border: 1px solid #3b82f6; }
+.medical-thumb { background: linear-gradient(180deg, #042f2e 0%, #0f172a 80%); border: 1px solid #14b8a6; }
+.university-thumb { background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%); border: 1px solid #f59e0b; }
+.defense-thumb { background: linear-gradient(135deg, #171717 0%, #262626 100%); border: 1px solid #f59e0b; }
+.creative-thumb { background: linear-gradient(135deg, #4c0519 0%, #1e1b4b 60%, #022c22 100%); border: 1px solid #f43f5e; }
+.aviation-thumb { background: linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%); border: 1px solid #fbbf24; }
+.industrial-thumb { background: linear-gradient(135deg, #27272a 0%, #18181b 100%); border: 1px solid #eab308; }
+.hospitality-thumb { background: linear-gradient(135deg, #064e3b 0%, #022c22 100%); border: 1px solid #d4af37; }
+.police-thumb { background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 1px solid #94a3b8; }
+.minimal-thumb { background: #ffffff; border: 1px solid #000; }
+.minimal-thumb .thumb-badge { background: #000; color: #fff; }
+
+.quantum-thumb { background: radial-gradient(circle at 10% 10%, #3b0764 0%, #1e1b4b 60%, #022c22 100%); border: 1px solid #10b981; }
+.racing-thumb { background: linear-gradient(135deg, #b91c1c 0%, #18181b 75%); border: 1px solid #ef4444; }
+.space-thumb { background: radial-gradient(circle at 50% 20%, #1e293b 0%, #030712 90%); border: 1px solid #38bdf8; }
+.biogen-thumb { background: linear-gradient(180deg, #f0fdfa 0%, #ccfbf1 50%, #99f6e4 100%); border: 1px solid #0d9488; }
+.biogen-thumb .thumb-badge { background: #0d9488; color: #fff; }
+.humanitarian-thumb { background: #ffffff; border: 1px solid #dc2626; }
+.humanitarian-thumb .thumb-badge { background: #dc2626; color: #fff; }
+.maritime-thumb { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0c4a6e 100%); border: 1px solid #eab308; }
+.cleanenergy-thumb { background: linear-gradient(135deg, #064e3b 0%, #022c22 60%, #065f46 100%); border: 1px solid #34d399; }
+.cyberpunk-thumb { background: linear-gradient(135deg, #831843 0%, #312e81 50%, #064e3b 100%); border: 1px solid #ec4899; }
+.diplomatic-thumb { background: linear-gradient(135deg, #450a0a 0%, #1c1917 80%); border: 1px solid #d4af37; }
+.cloud-thumb { background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 60%, #172554 100%); border: 1px solid #60a5fa; }
+.press-thumb { background: linear-gradient(135deg, #18181b 0%, #09090b 100%); border: 1px solid #dc2626; }
+.venture-thumb { background: linear-gradient(135deg, #14532d 0%, #052e16 70%, #022c22 100%); border: 1px solid #84cc16; }
+
+.template-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.template-info strong {
+  font-size: 0.74rem;
+  color: var(--text-main);
+}
+
+.template-info span {
+  font-size: 0.64rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+/* Text Presets */
+.text-presets-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-add-text-box {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: all 0.2s;
+}
+
+.btn-add-text-box:hover {
+  background: #202b42;
+  border-color: var(--canva-blue);
+  transform: translateY(-1px);
+}
+
+.btn-add-text-box.title-style h2 { font-size: 0.95rem; font-weight: 800; }
+.btn-add-text-box.subtitle-style h3 { font-size: 0.82rem; font-weight: 600; color: var(--canva-cyan); }
+.btn-add-text-box.body-style p { font-size: 0.75rem; color: var(--text-secondary); }
+.btn-add-text-box.mono-style code { font-family: var(--font-mono); font-size: 0.8rem; color: var(--canva-gold); }
+.btn-add-text-box span { font-size: 0.65rem; color: var(--text-muted); }
+
+/* Badge Chips */
+.badge-presets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip-badge-item {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.2s;
+}
+
+.chip-badge-item:hover { transform: scale(1.05); }
+.chip-badge-item.emerald { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399; }
+.chip-badge-item.cyan { background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.4); color: #22d3ee; }
+.chip-badge-item.gold { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; }
+.chip-badge-item.crimson { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; }
+.chip-badge-item.purple { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.4); color: #c084fc; }
+.chip-badge-item.slate { background: rgba(100, 116, 139, 0.15); border-color: rgba(100, 116, 139, 0.4); color: #cbd5e1; }
+
+/* Elements & Hardware */
+.elements-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.draggable-asset-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.draggable-asset-item:hover {
+  background: #202b42;
+  border-color: var(--canva-cyan);
+  transform: translateY(-2px);
+}
+
+.draggable-asset-item span {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+}
+
+.mini-chip-icon {
+  width: 32px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-chip-icon.gold { background: linear-gradient(135deg, #d4af37, #996515); }
+.mini-chip-icon.silver { background: linear-gradient(135deg, #e2e8f0, #64748b); }
+
+.mc-core {
+  width: 12px;
+  height: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
+}
+
+.mini-holo-seal {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, #f59e0b, #ec4899, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.mini-punch-slot {
+  width: 34px;
+  height: 6px;
+  border-radius: 6px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.mini-magstripe {
+  width: 36px;
+  height: 10px;
+  background: #111;
+  border: 1px solid #333;
+}
+
+.mini-shape-box {
+  width: 26px;
+  height: 18px;
+  border: 2px solid var(--canva-blue);
+  border-radius: 2px;
+}
+
+.mini-shape-pill {
+  width: 28px;
+  height: 14px;
+  border: 2px solid var(--canva-emerald);
+  border-radius: 10px;
+}
+
+.mini-shape-divider {
+  width: 30px;
+  height: 2px;
+  background: var(--canva-gold);
+}
+
+/* Uploads Drop Zone */
+.drop-zone-upload {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 0.2s;
+  color: var(--text-secondary);
+}
+
+.drop-zone-upload.small-dz {
+  padding: 16px 12px;
+}
+
+.drop-zone-upload:hover, .drop-zone-upload.dragover {
+  border-color: var(--canva-blue);
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--text-main);
+}
+
+.dz-text { font-size: 0.82rem; font-weight: 600; color: var(--text-main); }
+.dz-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+.uploads-history-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.upload-thumb-card {
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.upload-thumb-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Photos Gallery Grid */
+.photos-stock-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stock-photo-card {
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.stock-photo-card:hover {
+  transform: scale(1.03);
+  border-color: var(--canva-cyan);
+}
+
+.stock-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Codes Generator */
+.code-generator-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group-canva {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-label-canva {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.styled-input-canva {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.styled-input-canva:focus {
+  border-color: var(--canva-blue);
+}
+
+.btn-canva-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--canva-blue);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-canva-action:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Background Customizer */
+.bg-picker-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-bg-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+}
+
+.custom-bg-label {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.custom-color-control {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.hex-input {
+  width: 90px;
+  padding: 4px 8px;
+  font-size: 0.76rem;
+  font-family: var(--font-mono);
+}
+
+.bg-picker-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.bg-swatches-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bg-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.bg-swatch:hover {
+  transform: scale(1.12);
+}
+
+.bg-gradients-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.bg-grad-card {
+  height: 48px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  transition: transform 0.2s;
+}
+
+.bg-grad-card:hover {
+  transform: scale(1.03);
+}
+
+.bg-patterns-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn-pattern-opt {
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-pattern-opt:hover {
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-pattern-opt.active {
+  background: var(--canva-blue);
+  color: #fff;
+  border-color: var(--canva-blue);
+}
+
+/* --------------------------------------------------------------------------
+   7. Center Canvas Artboard Stage
+   -------------------------------------------------------------------------- */
+.canvas-viewport {
+  flex: 1;
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: auto;
+  position: relative;
+  outline: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.artboard-stage {
+  padding: 24px 20px 84px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  min-height: min-content;
+  min-width: min-content;
+}
+
+/* CR80 Card Artboard */
+.card-artboard {
+  position: relative;
+  background-color: var(--bg-card-default);
+  box-shadow: var(--shadow-artboard);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: width 0.3s ease, height 0.3s ease;
+  transform: scale(var(--canvas-zoom));
+  transform-origin: center center;
+}
+
+.card-artboard.cr80-portrait {
+  width: var(--card-w-portrait);
+  height: var(--card-h-portrait);
+}
+
+.card-artboard.cr80-landscape {
+  width: var(--card-w-landscape);
+  height: var(--card-h-landscape);
+}
+
+/* Artboard Security Pattern Overlay */
+.artboard-pattern-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.2;
+}
+
+.artboard-pattern-layer.pattern-guilloche {
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(255, 255, 255, 0.15) 62%, transparent 64%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.08) 10px, rgba(255, 255, 255, 0.08) 11px),
+    repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.08) 10px, rgba(255, 255, 255, 0.08) 11px);
+}
+
+.artboard-pattern-layer.pattern-circuits {
+  background-image: 
+    radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px),
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.artboard-pattern-layer.pattern-dots {
+  background-image: radial-gradient(rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
+  background-size: 12px 12px;
+}
+
+.artboard-pattern-layer.pattern-stripes {
+  background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 4px, transparent 4px, transparent 8px);
+}
+
+.artboard-pattern-layer.pattern-hexmesh {
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+}
+
+.artboard-pattern-layer.pattern-holonoise {
+  background: 
+    repeating-radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 2px, transparent 2px, transparent 6px),
+    repeating-linear-gradient(60deg, rgba(6, 182, 212, 0.06) 0, rgba(6, 182, 212, 0.06) 4px, transparent 4px, transparent 8px);
+}
+
+.artboard-pattern-layer.pattern-matrix {
+  background-image: 
+    linear-gradient(0deg, rgba(16, 185, 129, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+/* Elements Layer Container */
+.artboard-elements-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Canvas Element Base */
+.canvas-element {
+  position: absolute;
+  cursor: move;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.canvas-element[data-type="text"] {
+  outline: none;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  cursor: text;
+}
+
+.canvas-element[data-type="photo"] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   8. Canva Selection Overlay & Handles
+   -------------------------------------------------------------------------- */
+.canva-selection-box {
+  position: absolute;
+  border: 2px solid var(--canva-blue);
+  pointer-events: none;
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.canva-selection-box.hidden {
+  display: none;
+}
+
+.handle {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  background: #ffffff;
+  border: 2px solid var(--canva-blue);
+  border-radius: 50%;
+  box-shadow: var(--shadow-handle);
+  pointer-events: auto;
+}
+
+.handle-tl { top: -6px; left: -6px; cursor: nwse-resize; }
+.handle-tr { top: -6px; right: -6px; cursor: nesw-resize; }
+.handle-bl { bottom: -6px; left: -6px; cursor: nesw-resize; }
+.handle-br { bottom: -6px; right: -6px; cursor: nwse-resize; }
+
+.selection-name-tag {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  background: var(--canva-blue);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   9. Bottom Utility Bar
+   -------------------------------------------------------------------------- */
+.canvas-bottom-bar {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 80;
+}
+
+.page-tabs {
+  display: flex;
+  background: rgba(17, 22, 36, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 30px;
+  padding: 4px;
+  gap: 4px;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.page-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.page-tab-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+.page-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--canva-blue);
+}
+
+.canvas-zoom-controls {
+  display: flex;
+  align-items: center;
+  background: rgba(17, 22, 36, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 30px;
+  padding: 4px 8px;
+  gap: 6px;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.zoom-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.zoom-level {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 44px;
+  text-align: center;
+}
+
+.btn-fit-screen {
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   10. Modals: Import Template & 3D Simulation
+   -------------------------------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-backdrop.hidden {
+  display: none;
+}
+
+.modal-dialog {
+  background: var(--bg-drawer);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  width: 540px;
+  max-width: 90vw;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-dialog-lg {
+  width: 600px;
+}
+
+.modal-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.import-tabs-row {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-input);
+  padding: 3px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.import-tab-btn {
+  flex: 1;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.import-tab-btn.active {
+  background: var(--canva-blue);
+  color: #fff;
+}
+
+.import-tab-pane {
+  display: none;
+}
+
+.import-tab-pane.active {
+  display: block;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--bg-app);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* 3D Realistic Physical Simulation Modal */
+.modal-3d-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 20, 0.88);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modal-3d-backdrop.hidden {
+  display: none;
+}
+
+.modal-3d-content {
+  width: 900px;
+  max-width: 95vw;
+  height: 740px;
+  max-height: 90vh;
+  background: radial-gradient(circle at 50% 30%, #151e33 0%, #0c1220 80%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-3d-header {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-3d-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.m3d-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #22d3ee;
+}
+
+.modal-3d-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-secondary-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-secondary-sm:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.modal-3d-viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  perspective: 1200px;
+}
+
+.lanyard-assembly {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.lanyard-webbing {
+  width: 38px;
+  height: 90px;
+  background: #181f2f;
+  background-image: repeating-linear-gradient(45deg, #1e293b 0, #1e293b 4px, #0f172a 4px, #0f172a 8px);
+  border-left: 2px solid #334155;
+  border-right: 2px solid #334155;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.lanyard-woven-brand {
+  transform: rotate(-90deg);
+  white-space: nowrap;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.lanyard-metal-clip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -2px;
+}
+
+.clip-ring {
+  width: 20px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+  border: 1px solid #cbd5e1;
+}
+
+.clip-swivel {
+  width: 8px;
+  height: 12px;
+  background: linear-gradient(90deg, #94a3b8, #f1f5f9, #64748b);
+  border-radius: 2px;
+}
+
+.clip-hook {
+  width: 16px;
+  height: 20px;
+  border: 3.5px solid #cbd5e1;
+  border-bottom: 5px solid #94a3b8;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  background: transparent;
+  position: relative;
+  top: -2px;
+}
+
+.card-3d-flipper {
+  position: relative;
+  width: var(--card-w-portrait);
+  height: var(--card-h-portrait);
+  margin-top: 86px;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform: rotateX(var(--m3d-tilt-x, 0deg)) rotateY(calc(var(--m3d-tilt-y, 0deg) + var(--m3d-flip, 0deg)));
+}
+
+.card-3d-flipper.flipped {
+  --m3d-flip: 180deg;
+}
+
+.card-3d-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.7);
+}
+
+.face-back {
+  transform: rotateY(180deg);
+}
+
+.m3d-punch-slot {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 8px;
+  background: #080c14;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.m3d-holo-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    calc(var(--m3d-holo-x, 50%) * 1.5),
+    rgba(255, 0, 150, 0) 0%,
+    rgba(0, 255, 255, 0.25) 25%,
+    rgba(255, 255, 0, 0.3) 50%,
+    rgba(255, 0, 255, 0.25) 75%,
+    rgba(0, 255, 200, 0) 100%
+  );
+}
+
+.m3d-rendered-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.modal-3d-footer {
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   11. Toast Notifications
+   -------------------------------------------------------------------------- */
+.toast-shelf {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toast-item {
+  padding: 12px 18px;
+  background: #1e293b;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInToast 0.3s ease forwards;
+  pointer-events: auto;
+}
+
+.toast-item.success { border-left: 4px solid var(--canva-emerald); }
+.toast-item.info { border-left: 4px solid var(--canva-cyan); }
+
+@keyframes slideInToast {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   12. Company Quick-Brander & Web Preset Importer Styles
+   -------------------------------------------------------------------------- */
+.company-quick-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-group-canva {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label-canva {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.styled-input-canva {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  outline: none;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.styled-input-canva:focus {
+  border-color: var(--canva-blue);
+  background: #1e2840;
+}
+
+.btn-canva-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-canva-action:hover {
+  background: #2b3652;
+  border-color: var(--canva-blue);
+}
+
+.btn-canva-action.highlight-btn {
+  background: linear-gradient(135deg, #06b6d4, #2563eb);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
+}
+
+.btn-canva-action.highlight-btn:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+}
+
+/* Web Presets Grid inside Import Modal */
+.web-presets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.web-preset-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.web-preset-card:hover {
+  border-color: var(--canva-cyan);
+  background: #1e2840;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.wp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wp-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.wp-header strong {
+  font-size: 0.78rem;
+  color: var(--text-main);
+}
+
+.web-preset-card p {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* --------------------------------------------------------------------------
+   13. Touch & Mobile Performance Optimizations
+   -------------------------------------------------------------------------- */
+.canvas-viewport, .artboard-stage, .card-artboard {
+  touch-action: pan-x pan-y;
+}
+
+.canvas-element, .canva-selection-box, .handle {
+  touch-action: none !important;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+
+.canvas-element[contenteditable="true"],
+.canvas-element[contenteditable="true"] * {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  touch-action: auto !important;
+  cursor: text !important;
+}
+
+.card-artboard {
+  transform: scale(var(--canvas-zoom)) translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.canvas-element.is-dragging {
+  will-change: left, top;
+}
+
+.mobile-drawer-topbar {
+  display: none;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 85;
+  transition: opacity 0.25s ease;
+}
+
+.drawer-backdrop.hidden {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   14. Responsive Breakpoints (Laptop, Tablet & Mobile Phone)
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  :root {
+    --shadow-artboard: 0 16px 36px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+
+  /* Mobile Top Navbar */
+  .canva-navbar {
+    padding: 0 10px;
+    height: 50px;
+    gap: 6px;
+  }
+
+  .app-title span.badge-studio,
+  .save-status-indicator {
+    display: none;
+  }
+
+  .project-title-input {
+    width: 120px;
+    font-size: 0.76rem;
+  }
+
+  .nav-center .mode-pill-btn span,
+  .nav-right .btn-secondary-nav span,
+  .nav-right .btn-accent-nav span {
+    display: none;
+  }
+
+  .btn-secondary-nav, .btn-accent-nav, .mode-pill-btn {
+    padding: 6px 10px;
+  }
+
+  /* Horizontal Swipe Context Ribbon */
+  .context-toolbar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 10px;
+    height: 42px;
+  }
+  .context-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  .context-left, .context-right {
+    flex-shrink: 0;
+  }
+  .canva-select-font {
+    max-width: 130px;
+  }
+
+  /* Main Workspace Layout */
+  .canva-workspace {
+    flex-direction: row;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Compact Left Sidebar Rail */
+  .canva-sidebar {
+    width: 58px;
+    padding: 8px 0;
+    gap: 4px;
+  }
+  .sidebar-tab {
+    padding: 8px 2px;
+    font-size: 0.62rem;
+  }
+  .sidebar-tab svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Off-Canvas Sliding Drawer */
+  .mobile-drawer-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .mobile-drawer-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+  .btn-close-drawer {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-close-drawer:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .sidebar-drawer {
+    position: absolute;
+    left: 58px;
+    top: 0;
+    bottom: 0;
+    width: calc(100vw - 58px);
+    max-width: 380px;
+    z-index: 90;
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.75);
+    transform: translateX(-110%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
+  }
+
+  .sidebar-drawer.mobile-open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Artboard Stage with Optimized Mobile Padding */
+  .artboard-stage {
+    padding: 16px 8px 90px 8px;
+    width: 100%;
+    margin: auto;
+    min-height: min-content;
+  }
+
+  /* Bottom Controls Bar */
+  .canvas-bottom-bar {
+    left: 68px;
+    bottom: 10px;
+    right: 10px;
+    padding: 0 4px;
+    gap: 8px;
+  }
+  .page-tab-btn span:not(.page-dot) {
+    font-size: 0.72rem;
+  }
+  .canvas-zoom-controls {
+    padding: 2px 6px;
+  }
+
+  /* Modals on Mobile */
+  .modal-dialog {
+    width: 95vw;
+    max-width: 95vw;
+    margin: 10px;
+  }
+  .modal-3d-content {
+    width: 96vw;
+    height: 85vh;
+    border-radius: 14px;
+  }
+  .m3d-brand h3 {
+    font-size: 0.85rem;
+  }
+  .m3d-brand span.m3d-pill {
+    display: none;
+  }
+  .modal-3d-actions span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 0.82rem;
+  }
+  .app-logo {
+    width: 26px;
+    height: 26px;
+  }
+  .project-title-input {
+    width: 90px;
+  }
+  .canva-sidebar {
+    width: 52px;
+  }
+  .sidebar-drawer {
+    left: 52px;
+    width: calc(100vw - 52px);
+  }
+  .drawer-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-row-2col {
+    grid-template-columns: 1fr;
+  }
+  .web-presets-grid {
+    grid-template-columns: 1fr;
+  }
+  .canvas-bottom-bar {
+    left: 56px;
+  }
+  .btn-fit-screen {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. Print Stylesheet
+   -------------------------------------------------------------------------- */
+.print-sheet-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .canva-navbar, .context-toolbar, .canva-sidebar, .sidebar-drawer,
+  .canvas-bottom-bar, .canva-selection-box, .modal-3d-backdrop, .toast-shelf {
+    display: none !important;
+  }
+
+  .canva-workspace, .canvas-viewport, .artboard-stage {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+
+  .card-artboard {
+    width: 53.98mm !important;
+    height: 85.60mm !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: 1px dashed #aaa !important;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

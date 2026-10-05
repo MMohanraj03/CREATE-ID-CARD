@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>BadgeCraft Pro | Enterprise ID Card Studio & Template Designer</title>
+  <meta name="description" content="Canva-style professional corporate ID card creator. Design, edit on canvas, import external templates, customize 18+ typography fonts, textures, barcodes, and export 300DPI print-ready cards.">
+  
+  <!-- Optimized Google Fonts Collection (Core fast-loading typefaces, rest loaded dynamically on demand) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Fira+Code:wght@500;700&family=Inter:wght@400;600;700;800&family=Oswald:wght@600;700&family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  
+  <!-- CDN Scripts for Dynamic QR, Barcode, and High-Res Canvas Export (Deferred to avoid render blocking) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="canva-app-body">
+  
+  <!-- ================= 1. TOP APPLICATION BAR ================= -->
+  <header class="canva-navbar" id="canvaNavbar">
+    <div class="nav-left">
+      <div class="app-logo">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+          <circle cx="9" cy="10" r="2"></circle>
+          <line x1="15" y1="8" x2="17" y2="8"></line>
+          <line x1="15" y1="12" x2="17" y2="12"></line>
+          <path d="M7 16c0-1.66 1.34-3 3-3h4c1.66 0 3 1.34 3 3"></path>
+        </svg>
+      </div>
+      <span class="app-title">BadgeCraft <span class="badge-studio">STUDIO PRO</span></span>
+      
+      <div class="project-title-box">
+        <input type="text" id="projectTitleInput" class="project-title-input" value="Corporate_Employee_Badge_CR80" title="Click to rename badge project">
+        <span class="save-status-indicator" id="saveStatus">✓ Auto-saved to browser</span>
+      </div>
+    </div>
+
+    <!-- Center History & Mode Switching -->
+    <div class="nav-center">
+      <div class="history-controls">
+        <button type="button" class="btn-tool-icon" id="btnUndo" title="Undo (Ctrl+Z)" disabled>
+          <svg viewBox="0 0 24 24" width="17" height="17" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M3 7v6h6"></path>
+            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+          </svg>
+        </button>
+        <button type="button" class="btn-tool-icon" id="btnRedo" title="Redo (Ctrl+Y)" disabled>
+          <svg viewBox="0 0 24 24" width="17" height="17" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M21 7v6h-6"></path>
+            <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mode-pill-toggle">
+        <button type="button" class="mode-pill-btn active" id="btnMode2D" title="2D Interactive Canva Studio">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <path d="M3 9h18M9 21V9"></path>
+          </svg>
+          <span>Canvas Studio</span>
+        </button>
+        <button type="button" class="mode-pill-btn" id="btnMode3D" title="3D Realistic Lanyard Mockup">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <span>3D Simulation</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Export & Template Actions -->
+    <div class="nav-right">
+      
+      <!-- Import / Export Template Button -->
+      <button type="button" class="btn-secondary-nav" id="btnOpenImportModal" title="Import template from another site or file">
+        <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Import / Templates</span>
+      </button>
+
+      <div class="orientation-switch">
+        <button type="button" class="btn-tool-icon active" id="btnOrientPortrait" title="Portrait Badge (CR80 Standard)">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="6" y="2" width="12" height="20" rx="2"></rect>
+          </svg>
+        </button>
+        <button type="button" class="btn-tool-icon" id="btnOrientLandscape" title="Landscape Badge (Horizontal)">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+          </svg>
+        </button>
+      </div>
+
+      <button type="button" class="btn-secondary-nav" id="btnPrintTop">
+        <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Print CR80</span>
+      </button>
+
+      <div class="dropdown-wrapper">
+        <button type="button" class="btn-accent-nav" id="btnExportDropdown">
+          <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Export Image</span>
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <div class="export-menu hidden" id="exportMenu">
+          <button type="button" class="export-menu-item" id="exportFrontPNG">
+            <strong>Download Front Side (PNG)</strong>
+            <span>300 DPI high resolution badge image</span>
+          </button>
+          <button type="button" class="export-menu-item" id="exportBackPNG">
+            <strong>Download Back Side (PNG)</strong>
+            <span>With barcode, QR, and signature</span>
+          </button>
+          <div class="export-menu-divider"></div>
+          <button type="button" class="export-menu-item highlight-item" id="exportDualPNG">
+            <strong>Dual-Side Presentation (PNG)</strong>
+            <span>Front & back arranged on high-res sheet</span>
+          </button>
+          <div class="export-menu-divider"></div>
+          <button type="button" class="export-menu-item" id="exportTemplateJSON">
+            <strong>Export Template (JSON)</strong>
+            <span>Save template file to backup or share</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ================= 2. CONTEXTUAL PROPERTY TOOLBAR (CANVA TOP RIBBON) ================= -->
+  <section class="context-toolbar" id="contextToolbar" aria-label="Element Formatting Ribbon">
+    <div class="context-left" id="contextPropertiesRow">
+      
+      <!-- 30+ Font Family Selector with Rich Typeface Options -->
+      <div class="context-item" id="propFontFamilyWrap">
+        <select id="propFontFamily" class="canva-select-font" title="Select Font Family">
+          <optgroup label="Modern Sans-Serif">
+            <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans (Default)</option>
+            <option value="'Inter', sans-serif">Inter Clean</option>
+            <option value="'Outfit', sans-serif">Outfit Modern</option>
+            <option value="'Poppins', sans-serif">Poppins Geometric</option>
+            <option value="'Montserrat', sans-serif">Montserrat Bold</option>
+            <option value="'Lexend', sans-serif">Lexend Clarity</option>
+            <option value="'Manrope', sans-serif">Manrope Corporate</option>
+            <option value="'Space Grotesk', sans-serif">Space Grotesk Tech</option>
+            <option value="'Syne', sans-serif">Syne Avant-Garde</option>
+            <option value="'Work Sans', sans-serif">Work Sans Clean</option>
+            <option value="'DM Sans', sans-serif">DM Sans Minimal</option>
+            <option value="'Roboto', sans-serif">Roboto Corporate</option>
+            <option value="'Raleway', sans-serif">Raleway Elegant</option>
+            <option value="'Oswald', sans-serif">Oswald Condensed</option>
+          </optgroup>
+          <optgroup label="Luxury & Royal Serif">
+            <option value="'Cinzel', serif">Cinzel Royal Serif</option>
+            <option value="'Playfair Display', serif">Playfair Display</option>
+            <option value="'Cormorant Garamond', serif">Cormorant Garamond</option>
+            <option value="'Bodoni Moda', serif">Bodoni Moda Vogue</option>
+            <option value="'Prata', serif">Prata High Fashion</option>
+            <option value="'Marcellus', serif">Marcellus Classical</option>
+          </optgroup>
+          <optgroup label="Engineering & Monospace">
+            <option value="'Fira Code', monospace">Fira Code Tech</option>
+            <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+            <option value="'Space Mono', monospace">Space Mono</option>
+            <option value="'Roboto Mono', monospace">Roboto Mono</option>
+            <option value="'Share Tech Mono', monospace">Share Tech Terminal</option>
+          </optgroup>
+          <optgroup label="Calligraphic & Signature">
+            <option value="'Alex Brush', cursive">Alex Brush Signature</option>
+            <option value="'Great Vibes', cursive">Great Vibes Cursive</option>
+            <option value="'Dancing Script', cursive">Dancing Script Flow</option>
+            <option value="'Pacifico', cursive">Pacifico Casual</option>
+            <option value="'Allura', cursive">Allura Elegant Script</option>
+            <option value="'Caveat', cursive">Caveat Handwritten</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Font Size Stepper -->
+      <div class="context-item font-size-stepper" id="propFontSizeWrap">
+        <button type="button" class="step-btn" id="btnFontDecr" title="Decrease font size">-</button>
+        <input type="number" id="propFontSize" class="font-size-input" value="16" min="8" max="72">
+        <button type="button" class="step-btn" id="btnFontIncr" title="Increase font size">+</button>
+      </div>
+
+      <div class="toolbar-separator"></div>
+
+      <!-- Text / Fill Color Picker -->
+      <div class="context-item" id="propColorWrap">
+        <label class="color-picker-label" title="Text / Fill Color">
+          <span class="color-preview-circle" id="propColorPreview" style="background-color: #ffffff;"></span>
+          <input type="color" id="propColorPicker" class="visually-hidden" value="#ffffff">
+        </label>
+      </div>
+
+      <!-- Font Styles -->
+      <div class="context-item btn-group-inline" id="propTextStylesWrap">
+        <button type="button" class="btn-tool-prop" id="btnBold" title="Bold (Ctrl+B)"><strong>B</strong></button>
+        <button type="button" class="btn-tool-prop" id="btnItalic" title="Italic (Ctrl+I)"><em>I</em></button>
+        <button type="button" class="btn-tool-prop" id="btnUppercase" title="UPPERCASE / Normal">aA</button>
+      </div>
+
+      <div class="toolbar-separator"></div>
+
+      <!-- Alignment -->
+      <div class="context-item btn-group-inline" id="propAlignWrap">
+        <button type="button" class="btn-tool-prop" id="btnAlignLeft" title="Align Left">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="14" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="3" y2="18"></line></svg>
+        </button>
+        <button type="button" class="btn-tool-prop active" id="btnAlignCenter" title="Align Center">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="16" y1="14" x2="8" y2="14"></line><line x1="19" y1="18" x2="5" y2="18"></line></svg>
+        </button>
+        <button type="button" class="btn-tool-prop" id="btnAlignRight" title="Align Right">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="10" y2="14"></line><line x1="21" y1="18" x2="6" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Image Shape Crop (Active when Photo is selected) -->
+      <div class="context-item hidden" id="propImageShapeWrap">
+        <span class="context-label">Frame:</span>
+        <div class="btn-group-inline">
+          <button type="button" class="btn-tool-prop active" id="btnShapeRounded" data-img-shape="rounded" title="Rounded Corners">Rounded</button>
+          <button type="button" class="btn-tool-prop" id="btnShapeCircle" data-img-shape="circle" title="Full Circle">Circle</button>
+          <button type="button" class="btn-tool-prop" id="btnShapeSquare" data-img-shape="square" title="Sharp Square">Square</button>
+        </div>
+      </div>
+
+      <!-- Quick Opacity Slider -->
+      <div class="context-item" id="propOpacityWrap">
+        <label for="propOpacitySlider" class="context-label">Opacity:</label>
+        <input type="range" id="propOpacitySlider" min="10" max="100" value="100" class="range-slider">
+        <span class="opacity-value-label" id="propOpacityLabel">100%</span>
+      </div>
+    </div>
+
+    <!-- Right Contextual Layer & Management Actions -->
+    <div class="context-right">
+      <button type="button" class="btn-tool-prop" id="btnBringForward" title="Bring Forward">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <span>Bring Forward</span>
+      </button>
+
+      <button type="button" class="btn-tool-prop" id="btnSendBackward" title="Send Backward">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <span>Send Back</span>
+      </button>
+
+      <button type="button" class="btn-tool-prop" id="btnDuplicateElement" title="Duplicate (Ctrl+D)">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span>Duplicate</span>
+      </button>
+
+      <button type="button" class="btn-tool-prop btn-danger" id="btnDeleteElement" title="Delete (Del)">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ================= 3. MAIN WORKSPACE (SIDEBAR + CANVA ARTBOARD) ================= -->
+  <main class="canva-workspace">
+    
+    <!-- LEFT CANVA SIDEBAR NAVIGATION -->
+    <nav class="canva-sidebar" aria-label="Canva Tools Menu">
+      <button type="button" class="sidebar-tab active" data-drawer="drawerTemplates">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <path d="M3 9h18M9 21V9"></path>
+        </svg>
+        <span>Templates</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerCompany">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M3 21h18"></path>
+          <path d="M5 21V7l8-4v18"></path>
+          <path d="M19 21V11l-6-4"></path>
+          <path d="M9 9h1"></path>
+          <path d="M9 13h1"></path>
+          <path d="M9 17h1"></path>
+        </svg>
+        <span>Company</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerText">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <polyline points="4 7 4 4 20 4 20 7"></polyline>
+          <line x1="9" y1="20" x2="15" y2="20"></line>
+          <line x1="12" y1="4" x2="12" y2="20"></line>
+        </svg>
+        <span>Text</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerElements">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m4.93 4.93 4.24 4.24"></path>
+          <path d="m14.83 9.17 4.24-4.24"></path>
+          <path d="m14.83 14.83 4.24 4.24"></path>
+          <path d="m9.17 14.83-4.24 4.24"></path>
+        </svg>
+        <span>Elements</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerUploads">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <span>Uploads</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerPhotos">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <span>Photos</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerCodes">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Codes & QR</span>
+      </button>
+
+      <button type="button" class="sidebar-tab" data-drawer="drawerBackground">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="12" y1="2" x2="12" y2="4"></line>
+          <line x1="12" y1="20" x2="12" y2="22"></line>
+          <line x1="20" y1="12" x2="22" y2="12"></line>
+          <line x1="2" y1="12" x2="4" y2="12"></line>
+        </svg>
+        <span>Background</span>
+      </button>
+    </nav>
+
+
+    <!-- SIDEBAR ASSET DRAWER PANEL -->
+    <aside class="sidebar-drawer" id="sidebarDrawer">
+      
+      <div class="mobile-drawer-topbar">
+        <span class="mobile-drawer-title">Toolbox Options</span>
+        <button type="button" class="btn-close-drawer" id="btnCloseDrawer" aria-label="Close Panel">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      
+      <!-- DRAWER 1: TEMPLATES (EXPANDED 12+ TEMPLATES) -->
+      <div class="drawer-panel active" id="drawerTemplates">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Industry Templates</h3>
+          <p class="drawer-subtitle">12+ Professional corporate ID badge designs</p>
+        </div>
+
+        <div class="template-search-wrap">
+          <input type="text" id="templateFilterInput" class="styled-input-canva" placeholder="Search templates (tech, doctor, gold...)">
+        </div>
+
+        <div class="drawer-grid" id="templatesGrid">
+          
+          <div class="template-card" data-template="tech-cto">
+            <div class="template-preview-thumb cyber-thumb">
+              <span class="thumb-badge">TECH & AI</span>
+            </div>
+            <div class="template-info">
+              <strong>Nexus Tech CTO</strong>
+              <span>Slate carbon & neon cyan accents</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="executive-gold">
+            <div class="template-preview-thumb gold-thumb">
+              <span class="thumb-badge">EXECUTIVE</span>
+            </div>
+            <div class="template-info">
+              <strong>Sovereign Gold</strong>
+              <span>Luxury charcoal & champagne gold foil</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="corporate-blue">
+            <div class="template-preview-thumb corporate-thumb">
+              <span class="thumb-badge">FINTECH</span>
+            </div>
+            <div class="template-info">
+              <strong>Fintech Sapphire</strong>
+              <span>Deep royal navy blue with electric azure</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="medical-bio">
+            <div class="template-preview-thumb medical-thumb">
+              <span class="thumb-badge">HEALTHCARE</span>
+            </div>
+            <div class="template-info">
+              <strong>Hospital & Medical</strong>
+              <span>Clinical deep teal & sterile mint accents</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="university-pass">
+            <div class="template-preview-thumb university-thumb">
+              <span class="thumb-badge">EDUCATION</span>
+            </div>
+            <div class="template-info">
+              <strong>University Campus</strong>
+              <span>Crimson velvet & classic gold seal</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="cyber-defense">
+            <div class="template-preview-thumb defense-thumb">
+              <span class="thumb-badge">SECURITY</span>
+            </div>
+            <div class="template-info">
+              <strong>Cyber Operations</strong>
+              <span>Tactical black & high-visibility amber</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="creative-prism">
+            <div class="template-preview-thumb creative-thumb">
+              <span class="thumb-badge">CREATIVE</span>
+            </div>
+            <div class="template-info">
+              <strong>Studio Agency</strong>
+              <span>Sunset glow gradient & modern type</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="aviation-crew">
+            <div class="template-preview-thumb aviation-thumb">
+              <span class="thumb-badge">AVIATION</span>
+            </div>
+            <div class="template-info">
+              <strong>AeroGlobal Flight Crew</strong>
+              <span>Sky azure & aviator golden wings</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="industrial-eng">
+            <div class="template-preview-thumb industrial-thumb">
+              <span class="thumb-badge">INDUSTRIAL</span>
+            </div>
+            <div class="template-info">
+              <strong>Heavy Engineering</strong>
+              <span>Safety hazard stripes & steel carbon</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="hospitality-luxury">
+            <div class="template-preview-thumb hospitality-thumb">
+              <span class="thumb-badge">HOTEL & RESORT</span>
+            </div>
+            <div class="template-info">
+              <strong>Grand Concierge</strong>
+              <span>Deep emerald & champagne accents</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="police-badge">
+            <div class="template-preview-thumb police-thumb">
+              <span class="thumb-badge">PUBLIC SAFETY</span>
+            </div>
+            <div class="template-info">
+              <strong>Security Officer</strong>
+              <span>Midnight blue & metallic shield badge</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="pure-minimal">
+            <div class="template-preview-thumb minimal-thumb">
+              <span class="thumb-badge">MINIMALIST</span>
+            </div>
+            <div class="template-info">
+              <strong>Swiss Clean Monolith</strong>
+              <span>Stark black and white typography</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="quantum-labs">
+            <div class="template-preview-thumb quantum-thumb">
+              <span class="thumb-badge">QUANTUM TECH</span>
+            </div>
+            <div class="template-info">
+              <strong>Quantum Computing Labs</strong>
+              <span>Deep violet & neon laser emerald</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="racing-crew">
+            <div class="template-preview-thumb racing-thumb">
+              <span class="thumb-badge">MOTORSPORT</span>
+            </div>
+            <div class="template-info">
+              <strong>Formula Racing Crew</strong>
+              <span>High-octane scarlet & carbon weave</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="space-command">
+            <div class="template-preview-thumb space-thumb">
+              <span class="thumb-badge">AEROSPACE</span>
+            </div>
+            <div class="template-info">
+              <strong>Stellar Space Command</strong>
+              <span>Galactic midnight & starlight silver</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="biogen-pharma">
+            <div class="template-preview-thumb biogen-thumb">
+              <span class="thumb-badge">BIOTECH</span>
+            </div>
+            <div class="template-info">
+              <strong>BioGen Genetics</strong>
+              <span>Clinical frost white & cyan helix</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="humanitarian-ngo">
+            <div class="template-preview-thumb humanitarian-thumb">
+              <span class="thumb-badge">GLOBAL NGO</span>
+            </div>
+            <div class="template-info">
+              <strong>International Aid Corps</strong>
+              <span>Crisp neutral white & emergency red</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="maritime-marine">
+            <div class="template-preview-thumb maritime-thumb">
+              <span class="thumb-badge">MARITIME</span>
+            </div>
+            <div class="template-info">
+              <strong>Pacific Shipping Fleet</strong>
+              <span>Ocean navy blue & brass golden anchor</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="clean-energy">
+            <div class="template-preview-thumb cleanenergy-thumb">
+              <span class="thumb-badge">RENEWABLES</span>
+            </div>
+            <div class="template-info">
+              <strong>Helios Clean Energy</strong>
+              <span>Deep emerald solar & bright gold aura</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="cyberpunk-meta">
+            <div class="template-preview-thumb cyberpunk-thumb">
+              <span class="thumb-badge">METAVERSE</span>
+            </div>
+            <div class="template-info">
+              <strong>NeoTokyo Virtual Systems</strong>
+              <span>Cyber magenta & ultra neon teal</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="diplomatic-corps">
+            <div class="template-preview-thumb diplomatic-thumb">
+              <span class="thumb-badge">EMBASSY</span>
+            </div>
+            <div class="template-info">
+              <strong>Diplomatic Protocol Envoy</strong>
+              <span>Velvet burgundy & platinum crest</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="cloud-devops">
+            <div class="template-preview-thumb cloud-thumb">
+              <span class="thumb-badge">CLOUD INFRA</span>
+            </div>
+            <div class="template-info">
+              <strong>Hyperscale DevOps Team</strong>
+              <span>Deep amethyst & electric azure</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="press-broadcast">
+            <div class="template-preview-thumb press-thumb">
+              <span class="thumb-badge">MEDIA PRESS</span>
+            </div>
+            <div class="template-info">
+              <strong>Global News Network</strong>
+              <span>Studio matte black & live recording red</span>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="venture-capital">
+            <div class="template-preview-thumb venture-thumb">
+              <span class="thumb-badge">VENTURE CAPITAL</span>
+            </div>
+            <div class="template-info">
+              <strong>Apex Seed Ventures</strong>
+              <span>Charcoal forest & radiant lime accent</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DRAWER: COMPANY QUICK-BRANDER -->
+      <div class="drawer-panel" id="drawerCompany">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Company Quick-Brander</h3>
+          <p class="drawer-subtitle">1-Click setup your company name, logo & cardholder details</p>
+        </div>
+
+        <div class="company-quick-form">
+          <div class="form-group-canva">
+            <label class="form-label-canva">Company / Organization Name</label>
+            <input type="text" id="companyBrandNameInput" class="styled-input-canva" value="NEXUS DYNAMICS" placeholder="e.g. ACME GLOBAL INC.">
+          </div>
+
+          <div class="form-group-canva">
+            <label class="form-label-canva">Corporate Tagline / Division</label>
+            <input type="text" id="companyTaglineInput" class="styled-input-canva" value="Advanced Artificial Intelligence" placeholder="e.g. Enterprise Cloud Solutions">
+          </div>
+
+          <div class="form-group-canva">
+            <label class="form-label-canva">Primary Brand Color</label>
+            <div class="custom-bg-input-row" style="margin-top:4px;">
+              <input type="color" id="companyPrimaryColorPicker" value="#06b6d4" class="custom-color-control">
+              <input type="text" id="companyPrimaryColorHex" value="#06b6d4" class="styled-input-canva hex-input">
+            </div>
+          </div>
+
+          <div class="drawer-divider"></div>
+
+          <div class="form-group-canva">
+            <label class="form-label-canva">Employee Full Name</label>
+            <input type="text" id="companyEmpNameInput" class="styled-input-canva" value="ALEXANDER VANCE" placeholder="e.g. SARAH CONNOR">
+          </div>
+
+          <div class="form-group-canva">
+            <label class="form-label-canva">Designation / Job Role</label>
+            <input type="text" id="companyEmpRoleInput" class="styled-input-canva" value="Chief Technology Officer" placeholder="e.g. Principal Software Engineer">
+          </div>
+
+          <div class="form-group-canva">
+            <label class="form-label-canva">Department / Pill Label</label>
+            <input type="text" id="companyEmpDeptInput" class="styled-input-canva" value="ENGINEERING & AI SYSTEMS" placeholder="e.g. CLOUD ARCHITECTURE">
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group-canva">
+              <label class="form-label-canva">Employee ID</label>
+              <input type="text" id="companyEmpIdInput" class="styled-input-canva" value="NX-84920">
+            </div>
+            <div class="form-group-canva">
+              <label class="form-label-canva">Blood Group</label>
+              <input type="text" id="companyBloodGroupInput" class="styled-input-canva" value="O+">
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group-canva">
+              <label class="form-label-canva">Clearance Badge</label>
+              <input type="text" id="companyClearanceInput" class="styled-input-canva" value="ALL ACCESS">
+            </div>
+            <div class="form-group-canva">
+              <label class="form-label-canva">Valid Thru / Expiry</label>
+              <input type="text" id="companyExpiryInput" class="styled-input-canva" value="12 / 2029">
+            </div>
+          </div>
+
+          <button type="button" class="btn-canva-action highlight-btn" id="btnApplyCompanyBrand" style="margin-top:10px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Apply All to Company Badge</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DRAWER 2: TEXT TOOLBOX -->
+      <div class="drawer-panel" id="drawerText">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Add Text Elements</h3>
+          <p class="drawer-subtitle">Click to place customizable text on the card</p>
+        </div>
+        
+        <div class="text-presets-stack">
+          <button type="button" class="btn-add-text-box title-style" id="btnAddHeading">
+            <h2>Add Employee Name</h2>
+            <span>Bold Title Heading (19px)</span>
+          </button>
+
+          <button type="button" class="btn-add-text-box subtitle-style" id="btnAddSubtitle">
+            <h3>Add Job Title / Designation</h3>
+            <span>Role Subheading (12px)</span>
+          </button>
+
+          <button type="button" class="btn-add-text-box body-style" id="btnAddBodyText">
+            <p>Add Department / Facility</p>
+            <span>Sub-info Description (10px)</span>
+          </button>
+
+          <button type="button" class="btn-add-text-box mono-style" id="btnAddMonoCode">
+            <code>EMP-09412</code>
+            <span>Monospaced ID Code (12px)</span>
+          </button>
+        </div>
+
+        <div class="drawer-section-title">Pre-styled Access Badges</div>
+        <div class="badge-presets-grid">
+          <button type="button" class="chip-badge-item emerald" data-badge-preset="ALL ACCESS">ALL ACCESS</button>
+          <button type="button" class="chip-badge-item cyan" data-badge-preset="LEVEL 5 CLEARANCE">LEVEL 5</button>
+          <button type="button" class="chip-badge-item gold" data-badge-preset="EXECUTIVE VIP">EXECUTIVE VIP</button>
+          <button type="button" class="chip-badge-item crimson" data-badge-preset="RESTRICTED TS">RESTRICTED TS</button>
+          <button type="button" class="chip-badge-item purple" data-badge-preset="AUTHORIZED STAFF">AUTH STAFF</button>
+          <button type="button" class="chip-badge-item slate" data-badge-preset="VISITOR PASS">VISITOR PASS</button>
+        </div>
+      </div>
+
+      <!-- DRAWER 3: ELEMENTS & SHAPES -->
+      <div class="drawer-panel" id="drawerElements">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Badging Elements</h3>
+          <p class="drawer-subtitle">Smart hardware, holographic seals, and lines</p>
+        </div>
+
+        <div class="drawer-section-title">Security Hardware</div>
+        <div class="elements-grid">
+          
+          <div class="draggable-asset-item" data-add-element="chip-gold" title="Gold EMV Chip">
+            <div class="mini-chip-icon gold">
+              <div class="mc-core"></div>
+            </div>
+            <span>Gold Smart Chip</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-element="chip-silver" title="Silver EMV Chip">
+            <div class="mini-chip-icon silver">
+              <div class="mc-core"></div>
+            </div>
+            <span>Silver Smart Chip</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-element="holo-seal" title="Hologram Seal">
+            <div class="mini-holo-seal">✦</div>
+            <span>Hologram Seal</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-element="lanyard-slot" title="Lanyard Punch Slot">
+            <div class="mini-punch-slot"></div>
+            <span>Punch Slot</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-element="magstripe" title="Magnetic Stripe">
+            <div class="mini-magstripe"></div>
+            <span>Mag Stripe</span>
+          </div>
+        </div>
+
+        <div class="drawer-section-title">Corporate Logos & Symbols</div>
+        <div class="elements-grid">
+          <div class="draggable-asset-item" data-add-logo="hexagon">
+            <svg viewBox="0 0 40 40" width="28" height="28"><polygon points="20,2 38,12 38,28 20,38 2,28 2,12" fill="none" stroke="#06b6d4" stroke-width="2.5"></polygon><polygon points="20,9 31,16 31,24 20,31 9,24 9,16" fill="#06b6d4" opacity="0.85"></polygon></svg>
+            <span>Hexagon</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-logo="shield">
+            <svg viewBox="0 0 40 40" width="28" height="28"><path d="M20 4 L34 10 V22 C34 30 20 36 20 36 C20 36 6 30 6 22 V10 Z" fill="none" stroke="#f59e0b" stroke-width="2.5"></path><polyline points="14 20 18 24 26 16" stroke="#f59e0b" stroke-width="2.5" fill="none"></polyline></svg>
+            <span>Shield</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-logo="orb">
+            <svg viewBox="0 0 40 40" width="28" height="28"><circle cx="20" cy="20" r="16" fill="none" stroke="#3b82f6" stroke-width="2.5"></circle><ellipse cx="20" cy="20" rx="16" ry="6" fill="none" stroke="#3b82f6" stroke-width="2.5"></ellipse></svg>
+            <span>Tech Orb</span>
+          </div>
+
+          <div class="draggable-asset-item" data-add-logo="cube">
+            <svg viewBox="0 0 40 40" width="28" height="28"><path d="M20 4 L34 12 V28 L20 36 L6 28 V12 Z" fill="none" stroke="#ec4899" stroke-width="2.5"></path></svg>
+            <span>Isometric Cube</span>
+          </div>
+        </div>
+
+        <div class="drawer-section-title">Geometric Shapes & Dividers</div>
+        <div class="elements-grid">
+          <div class="draggable-asset-item" data-add-shape="rect">
+            <div class="mini-shape-box"></div>
+            <span>Rectangle</span>
+          </div>
+          <div class="draggable-asset-item" data-add-shape="pill">
+            <div class="mini-shape-pill"></div>
+            <span>Pill Badge</span>
+          </div>
+          <div class="draggable-asset-item" data-add-shape="divider">
+            <div class="mini-shape-divider"></div>
+            <span>Divider Line</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRAWER 4: UPLOADS -->
+      <div class="drawer-panel" id="drawerUploads">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Upload Media</h3>
+          <p class="drawer-subtitle">Upload your company logo, photo, or background</p>
+        </div>
+
+        <div class="drop-zone-upload" id="dropZoneUpload">
+          <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.8" fill="none">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span class="dz-text">Drag & drop files here</span>
+          <span class="dz-sub">or click to browse from device</span>
+          <input type="file" id="generalFileInput" accept="image/*" class="visually-hidden">
+        </div>
+
+        <div class="drawer-section-title">Uploaded Assets</div>
+        <div class="uploads-history-grid" id="uploadsHistoryGrid"></div>
+      </div>
+
+      <!-- DRAWER 5: PHOTOS (AVATAR GALLERY) -->
+      <div class="drawer-panel" id="drawerPhotos">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Executive Portraits</h3>
+          <p class="drawer-subtitle">Click to place or replace badge photo</p>
+        </div>
+
+        <div class="photos-stock-grid">
+          <div class="stock-photo-card" data-photo-url="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Executive 1">
+          </div>
+
+          <div class="stock-photo-card" data-photo-url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" alt="Executive 2">
+          </div>
+
+          <div class="stock-photo-card" data-photo-url="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80" alt="Executive 3">
+          </div>
+
+          <div class="stock-photo-card" data-photo-url="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" alt="Executive 4">
+          </div>
+
+          <div class="stock-photo-card" data-photo-url="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" alt="Executive 5">
+          </div>
+
+          <div class="stock-photo-card" data-photo-url="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80" alt="Executive 6">
+          </div>
+        </div>
+      </div>
+
+      <!-- DRAWER 6: CODES & QR -->
+      <div class="drawer-panel" id="drawerCodes">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Scannable Codes</h3>
+          <p class="drawer-subtitle">Dynamic industrial barcodes & vCard QR codes</p>
+        </div>
+
+        <div class="code-generator-form">
+          <div class="form-group-canva">
+            <label class="form-label-canva">Barcode Value</label>
+            <input type="text" id="barcodeValueInput" class="styled-input-canva" value="NX-84920">
+          </div>
+          <button type="button" class="btn-canva-action" id="btnAddBarcodeToCanvas">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="5" x2="3" y2="19"></line><line x1="7" y1="5" x2="7" y2="19"></line><line x1="11" y1="5" x2="11" y2="19"></line><line x1="14" y1="5" x2="14" y2="19"></line><line x1="18" y1="5" x2="18" y2="19"></line><line x1="21" y1="5" x2="21" y2="19"></line></svg>
+            <span>Insert / Update Barcode</span>
+          </button>
+
+          <div class="drawer-divider"></div>
+
+          <div class="form-group-canva">
+            <label class="form-label-canva">QR Code Data (vCard or URL)</label>
+            <input type="text" id="qrValueInput" class="styled-input-canva" value="https://verify.corp.com/id/NX-84920">
+          </div>
+          <button type="button" class="btn-canva-action" id="btnAddQrToCanvas">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Insert / Update QR Code</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DRAWER 7: BACKGROUNDS & PATTERNS -->
+      <div class="drawer-panel" id="drawerBackground">
+        <div class="drawer-header">
+          <h3 class="drawer-title">Card Background & Patterns</h3>
+          <p class="drawer-subtitle">Colors, gradients, textures, and guilloche waves</p>
+        </div>
+
+        <div class="bg-picker-section">
+          <!-- Custom Color Picker Input -->
+          <div class="custom-bg-input-row">
+            <label for="customBgColorPicker" class="custom-bg-label">Custom Color:</label>
+            <input type="color" id="customBgColorPicker" value="#0f172a" class="custom-color-control">
+            <input type="text" id="customBgHexInput" value="#0f172a" class="styled-input-canva hex-input">
+          </div>
+
+          <span class="bg-picker-title">Solid Colors</span>
+          <div class="bg-swatches-grid">
+            <button type="button" class="bg-swatch" style="background: #0f172a;" data-bg-color="#0f172a" title="Obsidian Slate"></button>
+            <button type="button" class="bg-swatch" style="background: #111827;" data-bg-color="#111827" title="Dark Gray"></button>
+            <button type="button" class="bg-swatch" style="background: #18110c;" data-bg-color="#18110c" title="Charcoal Coffee"></button>
+            <button type="button" class="bg-swatch" style="background: #062422;" data-bg-color="#062422" title="Deep Forest"></button>
+            <button type="button" class="bg-swatch" style="background: #131d38;" data-bg-color="#131d38" title="Midnight Navy"></button>
+            <button type="button" class="bg-swatch" style="background: #2b0f1e;" data-bg-color="#2b0f1e" title="Royal Plum"></button>
+            <button type="button" class="bg-swatch" style="background: #1c1917;" data-bg-color="#1c1917" title="Warm Stone"></button>
+            <button type="button" class="bg-swatch" style="background: #1a102f;" data-bg-color="#1a102f" title="Deep Violet"></button>
+            <button type="button" class="bg-swatch" style="background: #3b0764;" data-bg-color="#3b0764" title="Imperial Purple"></button>
+            <button type="button" class="bg-swatch" style="background: #450a0a;" data-bg-color="#450a0a" title="Burgundy Wine"></button>
+            <button type="button" class="bg-swatch" style="background: #022c22;" data-bg-color="#022c22" title="Emerald Pine"></button>
+            <button type="button" class="bg-swatch" style="background: #082f49;" data-bg-color="#082f49" title="Deep Ocean"></button>
+            <button type="button" class="bg-swatch" style="background: #1e293b;" data-bg-color="#1e293b" title="Slate Steel"></button>
+            <button type="button" class="bg-swatch" style="background: #334155;" data-bg-color="#334155" title="Titanium Gray"></button>
+            <button type="button" class="bg-swatch" style="background: #f8fafc;" data-bg-color="#f8fafc" title="Off White"></button>
+            <button type="button" class="bg-swatch" style="background: #ffffff;" data-bg-color="#ffffff" title="Pure White"></button>
+          </div>
+
+          <span class="bg-picker-title">Luxury Mesh & Gradients</span>
+          <div class="bg-gradients-grid">
+            <button type="button" class="bg-grad-card" style="background: radial-gradient(circle at 10% 10%, #1e293b 0%, #0a0f1d 75%);" data-bg-gradient="radial-gradient(circle at 10% 10%, #1e293b 0%, #0a0f1d 75%)">Cyber Carbon</button>
+            <button type="button" class="bg-grad-card" style="background: radial-gradient(circle at 50% 0%, #2a2824 0%, #121110 85%);" data-bg-gradient="radial-gradient(circle at 50% 0%, #2a2824 0%, #121110 85%)">Executive Gold</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(160deg, #1e3a8a 0%, #0f172a 65%);" data-bg-gradient="linear-gradient(160deg, #1e3a8a 0%, #0f172a 65%)">Sapphire Navy</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(180deg, #042f2e 0%, #0f172a 80%);" data-bg-gradient="linear-gradient(180deg, #042f2e 0%, #0f172a 80%)">Clinical Teal</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(135deg, #4c0519 0%, #1e1b4b 60%, #022c22 100%);" data-bg-gradient="linear-gradient(135deg, #4c0519 0%, #1e1b4b 60%, #022c22 100%)">Prism Sunset</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);" data-bg-gradient="linear-gradient(135deg, #312e81 0%, #1e1b4b 100%)">Royal Indigo</button>
+            <button type="button" class="bg-grad-card" style="background: radial-gradient(circle at 80% 20%, #064e3b 0%, #022c22 45%, #051410 100%);" data-bg-gradient="radial-gradient(circle at 80% 20%, #064e3b 0%, #022c22 45%, #051410 100%)">Hyper Aurora</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(135deg, #78350f 0%, #292524 60%, #0c0a09 100%);" data-bg-gradient="linear-gradient(135deg, #78350f 0%, #292524 60%, #0c0a09 100%)">Golden Hour</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(135deg, #701a75 0%, #1e1b4b 50%, #082f49 100%);" data-bg-gradient="linear-gradient(135deg, #701a75 0%, #1e1b4b 50%, #082f49 100%)">Cyberpunk Glow</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(145deg, #4c0519 0%, #1f040d 75%);" data-bg-gradient="linear-gradient(145deg, #4c0519 0%, #1f040d 75%)">Deep Velvet</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(135deg, #3f3f46 0%, #18181b 70%, #09090b 100%);" data-bg-gradient="linear-gradient(135deg, #3f3f46 0%, #18181b 70%, #09090b 100%)">Carbon Steel</button>
+            <button type="button" class="bg-grad-card" style="background: linear-gradient(160deg, #f1f5f9 0%, #cbd5e1 60%, #94a3b8 100%); color:#0f172a; text-shadow:none;" data-bg-gradient="linear-gradient(160deg, #f1f5f9 0%, #cbd5e1 60%, #94a3b8 100%)">Nordic Frost</button>
+          </div>
+
+          <span class="bg-picker-title">Security Patterns & Guilloche</span>
+          <div class="bg-patterns-grid">
+            <button type="button" class="btn-pattern-opt active" data-pattern="none">No Pattern</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="guilloche">Guilloche Waves</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="circuits">Micro Circuits</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="dots">Micro-Dots Grid</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="stripes">Diagonal Carbon</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="hexmesh">Security Hex Mesh</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="holonoise">Holo Prismatic</button>
+            <button type="button" class="btn-pattern-opt" data-pattern="matrix">Binary Code Stream</button>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Mobile Drawer Backdrop Overlay -->
+    <div class="drawer-backdrop hidden" id="drawerBackdrop"></div>
+
+
+    <!-- ================= 4. CENTER CANVA ARTBOARD STAGE ================= -->
+    <section class="canvas-viewport" id="canvasViewport" tabindex="0">
+      
+      <!-- Canva Artboard Stage Container -->
+      <div class="artboard-stage" id="artboardStage">
+        
+        <!-- The Actual CR80 ID Card Artboard -->
+        <div class="card-artboard cr80-portrait" id="cardArtboard" role="region" aria-label="Editable ID Card Artboard">
+          
+          <!-- Background Pattern Overlay Layer -->
+          <div class="artboard-pattern-layer" id="artboardPatternLayer"></div>
+
+          <!-- Card Layers (Elements are dynamically appended here) -->
+          <div class="artboard-elements-container" id="elementsContainer"></div>
+
+          <!-- Canva Selection Overlay with Resize Handles -->
+          <div class="canva-selection-box hidden" id="selectionBox">
+            <div class="handle handle-tl" data-handle="tl"></div>
+            <div class="handle handle-tr" data-handle="tr"></div>
+            <div class="handle handle-bl" data-handle="bl"></div>
+            <div class="handle handle-br" data-handle="br"></div>
+            <div class="selection-name-tag" id="selectionNameTag">Element</div>
+          </div>
+
+        </div><!-- /card-artboard -->
+
+      </div><!-- /artboard-stage -->
+
+      <!-- Canvas Bottom Utility Bar (Page Tabs & Zoom Controls) -->
+      <footer class="canvas-bottom-bar">
+        <div class="page-tabs" role="tablist">
+          <button type="button" class="page-tab-btn active" id="btnPageFront" role="tab">
+            <span class="page-dot"></span>
+            <span>Front Side (Page 1)</span>
+          </button>
+          <button type="button" class="page-tab-btn" id="btnPageBack" role="tab">
+            <span class="page-dot"></span>
+            <span>Back Side (Page 2)</span>
+          </button>
+        </div>
+
+        <div class="canvas-zoom-controls">
+          <button type="button" class="zoom-btn" id="btnZoomOut" title="Zoom Out">-</button>
+          <span class="zoom-level" id="zoomLevelText">100%</span>
+          <button type="button" class="zoom-btn" id="btnZoomIn" title="Zoom In">+</button>
+          <button type="button" class="btn-fit-screen" id="btnZoomFit">Fit</button>
+        </div>
+      </footer>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= 5. IMPORT / TEMPLATE MODAL ================= -->
+  <div class="modal-backdrop hidden" id="importModal" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <h3 id="importModalTitle">Import Template or Project</h3>
+        <button type="button" class="btn-close-modal" id="btnCloseImportModal" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="import-tabs-row">
+          <button type="button" class="import-tab-btn active" data-import-tab="tabImportWebPresets">Web Preset Importer</button>
+          <button type="button" class="import-tab-btn" data-import-tab="tabImportURL">Website URL / Image</button>
+          <button type="button" class="import-tab-btn" data-import-tab="tabImportJSON">JSON Template File</button>
+        </div>
+
+        <!-- TAB 1: Web Presets (Popular Tech & Enterprise Brands) -->
+        <div class="import-tab-pane active" id="tabImportWebPresets">
+          <p class="modal-desc">Click any online corporate website template below to instantly import its styling, colors, and layout:</p>
+          <div class="web-presets-grid" id="webPresetsGrid">
+            
+            <div class="web-preset-card" data-web-preset="google-cloud">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#4285f4;"></span>
+                <strong>Google Cloud Enterprise</strong>
+              </div>
+              <p>Clean white & Google signature blue, security micro-grid</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="apple-silicon">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#a3a3a3;"></span>
+                <strong>Apple Infinite Loop</strong>
+              </div>
+              <p>Space gray matte titanium, ultra-minimal typography</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="microsoft-corp">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#00a4ef;"></span>
+                <strong>Microsoft Redmond Ops</strong>
+              </div>
+              <p>Azure blue accent, fluent corporate card structure</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="tesla-gigafactory">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#e82127;"></span>
+                <strong>Tesla Gigafactory</strong>
+              </div>
+              <p>Stark dark obsidian & Tesla racing red performance badge</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="spacex-starbase">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#06b6d4;"></span>
+                <strong>SpaceX Starbase Launch</strong>
+              </div>
+              <p>Deep space black, orbital telemetry monospaced codes</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="amazon-aws">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#ff9900;"></span>
+                <strong>Amazon AWS Infrastructure</strong>
+              </div>
+              <p>Squid ink navy & AWS electric amber security clear pass</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="nvidia-ai">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#76b900;"></span>
+                <strong>Nvidia AI Enterprise</strong>
+              </div>
+              <p>Dark brushed carbon & Nvidia GeForce toxic green glow</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="meta-reality">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#0668e1;"></span>
+                <strong>Meta Reality Labs</strong>
+              </div>
+              <p>Spatial gradient mesh & modern holographic badge</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="harvard-med">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#a51c30;"></span>
+                <strong>Harvard Medical School</strong>
+              </div>
+              <p>Crimson velvet heritage & gold seal hospital credential</p>
+            </div>
+
+            <div class="web-preset-card" data-web-preset="un-diplomat">
+              <div class="wp-header">
+                <span class="wp-dot" style="background:#009edb;"></span>
+                <strong>United Nations Envoy</strong>
+              </div>
+              <p>UN international blue & diplomatic security passport</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 2: Image / Website URL Smart Extractor -->
+        <div class="import-tab-pane" id="tabImportURL">
+          <p class="modal-desc">Type your company website domain or URL. We will extract the brand name and generate a customized badge:</p>
+          <div class="form-group-canva">
+            <label class="form-label-canva">Company Website URL or Domain:</label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="importWebsiteDomainInput" class="styled-input-canva" placeholder="e.g. acme-tech.com or https://company.io" style="flex:1;">
+              <button type="button" class="btn-secondary-nav" id="btnExtractWebsite">
+                <span>Extract Brand</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="drawer-divider" style="margin:16px 0;"></div>
+
+          <p class="modal-desc">Or load an existing ID badge photo from web or device as reference:</p>
+          <div class="form-group-canva">
+            <label class="form-label-canva">Badge Image URL:</label>
+            <input type="text" id="importImageUrlInput" class="styled-input-canva" placeholder="https://example.com/company-badge-sample.jpg">
+          </div>
+          <div class="drop-zone-upload small-dz" id="dropZoneRefImage" style="margin-top:12px;">
+            <span>Or upload badge image file (.png, .jpg)</span>
+            <input type="file" id="refImageFileInput" accept="image/*" class="visually-hidden">
+          </div>
+        </div>
+
+        <!-- TAB 3: JSON File or Paste -->
+        <div class="import-tab-pane" id="tabImportJSON">
+          <p class="modal-desc">Upload a BadgeCraft JSON template file or paste template data:</p>
+          <div class="drop-zone-upload small-dz" id="dropZoneTemplateJSON">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+            <span>Click or drag & drop <strong>.json</strong> template file</span>
+            <input type="file" id="templateFileInput" accept=".json" class="visually-hidden">
+          </div>
+          <div class="form-group-canva" style="margin-top:12px;">
+            <label class="form-label-canva">Or Paste JSON Data:</label>
+            <textarea id="templatePasteTextarea" class="styled-input-canva" rows="4" placeholder="Paste template JSON code here..."></textarea>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-nav" id="btnCancelImport">Cancel</button>
+        <button type="button" class="btn-accent-nav" id="btnApplyImport">Load Template</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= 6. REALISTIC 3D MOCKUP MODAL VIEWPORT ================= -->
+  <div class="modal-3d-backdrop hidden" id="modal3DView" role="dialog" aria-modal="true" aria-label="3D Realistic ID Card View">
+    <div class="modal-3d-content">
+      
+      <div class="modal-3d-header">
+        <div class="modal-3d-brand">
+          <span class="m3d-pill">LIVE 3D SIMULATION</span>
+          <h3>Realistic Lanyard & Security Foil Mockup</h3>
+        </div>
+        
+        <div class="modal-3d-actions">
+          <button type="button" class="btn-secondary-sm" id="btnFlip3DModal">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+            <span>Flip Card 3D</span>
+          </button>
+          <button type="button" class="btn-close-modal" id="btnClose3DModal" aria-label="Close 3D View">✕</button>
+        </div>
+      </div>
+
+      <!-- 3D Physics Viewport -->
+      <div class="modal-3d-viewport" id="modal3DViewport">
+        
+        <!-- Lanyard Strap & Clip Assembly -->
+        <div class="lanyard-assembly" id="lanyardAssembly">
+          <div class="lanyard-webbing">
+            <span class="lanyard-woven-brand" id="m3dLanyardText">ENTERPRISE BADGE • OFFICIAL</span>
+          </div>
+          <div class="lanyard-metal-clip">
+            <div class="clip-ring"></div>
+            <div class="clip-swivel"></div>
+            <div class="clip-hook"></div>
+          </div>
+        </div>
+
+        <!-- 3D Card Flipper Object -->
+        <div class="card-3d-flipper" id="card3DFlipper">
+          
+          <!-- Front Face of 3D Card -->
+          <div class="card-3d-face face-front" id="m3dCardFront">
+            <div class="m3d-punch-slot"></div>
+            <div class="m3d-holo-sheen" id="m3dHoloFront"></div>
+            <div class="artboard-pattern-layer" id="m3dPatternFront"></div>
+            <div class="m3d-rendered-content" id="m3dFrontContent"></div>
+          </div>
+
+          <!-- Back Face of 3D Card -->
+          <div class="card-3d-face face-back" id="m3dCardBack">
+            <div class="m3d-punch-slot"></div>
+            <div class="m3d-holo-sheen" id="m3dHoloBack"></div>
+            <div class="artboard-pattern-layer" id="m3dPatternBack"></div>
+            <div class="m3d-rendered-content" id="m3dBackContent"></div>
+          </div>
+
+        </div><!-- /card-3d-flipper -->
+
+      </div>
+
+      <div class="modal-3d-footer">
+        <p>💡 Hover and move your cursor over the badge to inspect dynamic holographic foil reflections & 3D gyroscope physics.</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Toast Notification Shelf -->
+  <div class="toast-shelf" id="toastShelf" aria-live="polite"></div>
+
+  <!-- Hidden Print Engine -->
+  <div id="printSheet" class="print-sheet-root"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
